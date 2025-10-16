@@ -1,0 +1,53 @@
+{
+  "name": "create-express-simple",
+  "version": "1.0.0",
+  "description": "CLI to create Express.js projects",
+  "main": "bin/index.js",
+  "type": "module",
+  "bin": {
+    "create-express-simple": "bin/index.js"
+  },
+  "files": [
+    "bin",
+    "templates",
+    "src"
+  ],
+  "keywords": [
+    "express",
+    "cli",
+    "template",
+    "typescript",
+    "javascript",
+    "nodejs",
+    "rest",
+    "realtime",
+    "socket.io",
+    "minimal",
+    "project",
+    "boilerplate",
+    "scaffold",
+    "starter",
+    "generator",
+    "create-express-simple"
+  ],
+  "author": "Baodt2911",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Baodt2911/create-express-simple"
+  },
+  "bugs": {
+    "url": "https://github.com/Baodt2911/create-express-simple/issues"
+  },
+  "homepage": "https://github.com/Baodt2911/create-express-simple#readme",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^14.0.1",
+    "fs-extra": "^11.1.1",
+    "inquirer": "^9.2.15",
+    "ora": "^7.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
