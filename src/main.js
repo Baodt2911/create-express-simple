@@ -91,8 +91,28 @@ export async function createProject(projectName, options) {
       )
     );
     pkgManager = defaultPackageManager;
-  } else if (!pkgManager) {
-    pkgManager = defaultPackageManager;
+  }
+
+  if (!pkgManager) {
+    if (availableManagers.length === 1) {
+      pkgManager = availableManagers[0];
+    } else {
+      const { selected } = await inquirer.prompt([
+        {
+          type: "list",
+          name: "selected",
+          message: "Select package manager:",
+          choices: availableManagers.map((manager) => ({
+            name:
+              manager === "npm"
+                ? "npm (Node Package Manager)"
+                : "yarn (Yarn Package Manager)",
+            value: manager,
+          })),
+        },
+      ]);
+      pkgManager = selected;
+    }
   }
 
   const targetDir = path.join(process.cwd(), projectName);
