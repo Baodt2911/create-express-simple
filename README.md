@@ -31,7 +31,7 @@ npx create-express-simple my-app
 
 ```bash
 # General syntax
-npx create-express-simple <project-name> --type <js|ts> --template <minimal|rest|realtime>
+npx create-express-simple <project-name> --type <js|ts> --template <minimal|rest|realtime> --package-manager <npm|yarn>
 ```
 
 Example:
@@ -46,6 +46,9 @@ After generation, change into the project directory and install dependencies:
 ```bash
 cd my-app
 npm install
+
+# or with yarn
+yarn install
 ```
 
 ## Template Types

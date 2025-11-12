@@ -10,12 +10,24 @@ import { dirname } from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const SUPPORTED_PACKAGE_MANAGERS = ["npm", "yarn"];
+
+function isPackageManagerAvailable(command) {
+  try {
+    execSync(`${command} --version`, { stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function createProject(projectName, options) {
-  let { type, template } = options;
+  let { type, template, packageManager } = options;
 
   // ✅ Chỉ gọi toLowerCase nếu có giá trị
   let lang = type ? type.toLowerCase() : undefined;
   let tmpl = template ? template.toLowerCase() : undefined;
+  let pkgManager = packageManager ? packageManager.toLowerCase() : undefined;
 
   // Nếu người dùng không truyền type → hỏi
   if (!lang || !["js", "ts"].includes(lang)) {
@@ -48,6 +60,41 @@ export async function createProject(projectName, options) {
         : "minimal";
   }
 
+  const availableManagers = SUPPORTED_PACKAGE_MANAGERS.filter(
+    isPackageManagerAvailable
+  );
+
+  if (!availableManagers.length) {
+    console.log(
+      chalk.red(
+        "❌ No supported package managers found. Please install npm or yarn."
+      )
+    );
+    process.exit(1);
+  }
+
+  const defaultPackageManager = availableManagers.includes("npm")
+    ? "npm"
+    : availableManagers[0];
+
+  if (pkgManager && !SUPPORTED_PACKAGE_MANAGERS.includes(pkgManager)) {
+    console.log(
+      chalk.yellow(
+        `⚠️  Unsupported package manager "${pkgManager}". Falling back to ${defaultPackageManager}.`
+      )
+    );
+    pkgManager = defaultPackageManager;
+  } else if (pkgManager && !isPackageManagerAvailable(pkgManager)) {
+    console.log(
+      chalk.yellow(
+        `⚠️  Package manager "${pkgManager}" not found. Falling back to ${defaultPackageManager}.`
+      )
+    );
+    pkgManager = defaultPackageManager;
+  } else if (!pkgManager) {
+    pkgManager = defaultPackageManager;
+  }
+
   const targetDir = path.join(process.cwd(), projectName);
   const templateDir = path.join(__dirname, "../templates", lang, tmpl);
 
@@ -76,17 +123,24 @@ export async function createProject(projectName, options) {
   // Cài đặt dependencies
   try {
     console.log(chalk.yellow("\n📦 Installing dependencies..."));
-    execSync("npm install", { cwd: targetDir, stdio: "inherit" });
-    console.log(chalk.green("\n✅ Installation complete!\n"));
+    const installCommand = pkgManager === "yarn" ? "yarn install" : "npm install";
+    execSync(installCommand, { cwd: targetDir, stdio: "inherit" });
+    console.log(
+      chalk.green(
+        `\n✅ Installation complete with ${pkgManager === "yarn" ? "Yarn" : "npm"}!\n`
+      )
+    );
   } catch {
     console.log(
       chalk.red(
-        "⚠️  Failed to install dependencies. Run 'npm install' manually."
+        `⚠️  Failed to install dependencies. Run '${pkgManager === "yarn" ? "yarn install" : "npm install"}' manually.`
       )
     );
   }
 
   console.log(chalk.cyan(`\n✨ Done! Get started with:`));
   console.log(chalk.white(`  cd ${projectName}`));
-  console.log(chalk.white(`  npm start\n`));
+  console.log(
+    chalk.white(`  ${pkgManager === "yarn" ? "yarn start" : "npm start"}\n`)
+  );
 }

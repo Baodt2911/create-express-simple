@@ -14,6 +14,10 @@ program
     "--template <template>",
     "Project template (minimal | rest | realtime)"
   )
+  .option(
+    "-p, --package-manager <packageManager>",
+    "Package manager to install dependencies (npm | yarn)"
+  )
   .version("1.0.0")
   .action((projectName, options) => {
     console.log(
